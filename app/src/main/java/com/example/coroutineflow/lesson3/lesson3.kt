@@ -1,24 +1,25 @@
-package com.example.coroutineflow
+package com.example.coroutineflow.lesson3
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 suspend fun main() {
 
-    getFlowByBuilderFlow().filter { it.isPrime() }
+    val result = getFlowByBuilderFlow().filter { it.isPrime() }
         .filter { it > 20 }
         .map {
             println("map")
             "number: $it"
         }
-        .collect {
-            println(it)
-        }
+        .first()
 
+    println(result)
 }
 
 fun getFlowByFlowOfBuilder(): Flow<Int> {
@@ -26,11 +27,13 @@ fun getFlowByFlowOfBuilder(): Flow<Int> {
 }
 
 fun getFlowByBuilderFlow(): Flow<Int> {
-    val numbers = listOf(3, 4, 8, 16, 5, 17, 11, 32, 41, 28, 43, 47, 84, 116, 53, 29, 61)
+    val fisrtFlow = getFlowByFlowOfBuilder()
     return flow {
-        numbers.forEach {
-            emit(it)
-        }
+//        fisrtFlow.collect {
+//            println("Emitted from first flow: $it")
+//            emit(it)
+//        }
+        emitAll(fisrtFlow)
     }
 }
 
