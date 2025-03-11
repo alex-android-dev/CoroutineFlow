@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.coroutineflow.databinding.ActivityCryptoBinding
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class CryptoActivity : AppCompatActivity() {
@@ -22,11 +23,23 @@ class CryptoActivity : AppCompatActivity() {
 
     private val adapter = CryptoAdapter()
 
+
+    private var job : Job? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setupRecyclerView()
+    }
+
+    override fun onResume() {
+        super.onResume()
         observeViewModel()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopObserving()
     }
 
     private fun setupRecyclerView() {
@@ -35,7 +48,7 @@ class CryptoActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
+        job = lifecycleScope.launch {
             viewModel.state.collect {
                 when (it) {
                     is State.Initial -> {
@@ -53,7 +66,10 @@ class CryptoActivity : AppCompatActivity() {
                 }
             }
         }
+    }
 
+    private fun stopObserving() {
+        job?.cancel()
     }
 
     companion object {
