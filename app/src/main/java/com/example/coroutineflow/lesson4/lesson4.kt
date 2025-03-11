@@ -13,7 +13,7 @@ val coroutineScope = CoroutineScope(Dispatchers.IO)
 suspend fun main() {
     val flow = getFlow()
 
-    // Счетчик начнется с 0
+    // Flow прекратит своё существование после того как выведется первый элемент
     val job1 = coroutineScope.launch {
         flow.first().let {
             println(it)
@@ -22,7 +22,6 @@ suspend fun main() {
 
     delay(5000)
 
-    // Через 5 секунд delay счетчик снова начнется с нуля
     val job2 = coroutineScope.launch {
         flow.collect {
             println(it)
