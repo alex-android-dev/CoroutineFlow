@@ -6,7 +6,9 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.coroutineflow.databinding.ActivityCryptoBinding
+import kotlinx.coroutines.launch
 
 class CryptoActivity : AppCompatActivity() {
 
@@ -33,22 +35,25 @@ class CryptoActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.state.observe(this) {
-            when (it) {
-                is State.Initial -> {
-                    binding.progressBarLoading.isVisible = false
-                }
+        lifecycleScope.launch {
+            viewModel.state.collect {
+                when (it) {
+                    is State.Initial -> {
+                        binding.progressBarLoading.isVisible = false
+                    }
 
-                is State.Loading -> {
-                    binding.progressBarLoading.isVisible = true
-                }
+                    is State.Loading -> {
+                        binding.progressBarLoading.isVisible = true
+                    }
 
-                is State.Content -> {
-                    binding.progressBarLoading.isVisible = false
-                    adapter.submitList(it.currencyList)
+                    is State.Content -> {
+                        binding.progressBarLoading.isVisible = false
+                        adapter.submitList(it.currencyList)
+                    }
                 }
             }
         }
+
     }
 
     companion object {
