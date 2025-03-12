@@ -1,4 +1,4 @@
-package com.example.coroutineflow
+package com.example.coroutineflow.user
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

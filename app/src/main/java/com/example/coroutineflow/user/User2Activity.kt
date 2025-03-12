@@ -1,13 +1,11 @@
-package com.example.coroutineflow
+package com.example.coroutineflow.user
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.coroutineflow.databinding.ActivityUsers2Binding
-import kotlinx.coroutines.CoroutineScope
 
 class Users2Activity : AppCompatActivity() {
 

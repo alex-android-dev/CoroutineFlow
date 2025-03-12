@@ -1,4 +1,4 @@
-package com.example.coroutineflow
+package com.example.coroutineflow.user
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
