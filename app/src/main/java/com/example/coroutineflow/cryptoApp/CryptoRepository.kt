@@ -1,8 +1,8 @@
 package com.example.coroutineflow.cryptoApp
 
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlin.random.Random
 
 object CryptoRepository {
@@ -10,15 +10,16 @@ object CryptoRepository {
     private val currencyNames = listOf("BTC", "ETH", "USDT", "BNB", "USDC")
     private val currencyList = mutableListOf<Currency>()
 
-    fun getCurrencyFlow(): Flow<List<Currency>> = flow {
-        while (true) {
-            delay(3000) // иммитация долгой загрузки
+    private val _currencyListFlow = MutableSharedFlow<List<Currency>>()
+    val currencyListFlow = _currencyListFlow.asSharedFlow()
 
-            generateCurrencyFlow()
-            emit(currencyList.toList())
 
-            delay(3000) // условие бизнес логики. Автообновление должно происходить каждые 3 секунды
-        }
+    suspend fun loadData() {
+        delay(3000) // иммитация долгой загрузки
+
+        generateCurrencyFlow()
+
+        _currencyListFlow.emit(currencyList.toList())
     }
 
     private fun generateCurrencyFlow() {
