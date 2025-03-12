@@ -4,7 +4,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flow
-import java.util.concurrent.CyclicBarrier
 import kotlin.random.Random
 
 object CryptoRepository {
@@ -15,7 +14,7 @@ object CryptoRepository {
     private val refreshEvents = MutableSharedFlow<Unit>()
 
 
-    fun getCurrencyList() : Flow<List<Currency>> = flow {
+    fun getCurrencyList(): Flow<List<Currency>> = flow {
         delay(3000) // иммитация долгой загрузки
         generateCurrencyFlow()
         emit(currencyList.toList())
