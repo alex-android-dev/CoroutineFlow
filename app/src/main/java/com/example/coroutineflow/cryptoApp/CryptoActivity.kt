@@ -5,8 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -33,15 +31,8 @@ class CryptoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        setPaddings()
-
         setupRecyclerView()
         observeViewModel()
-
-        binding.btnRefreshList.setOnClickListener {
-            viewModel.refreshList()
-        }
     }
 
     private fun setupRecyclerView() {
@@ -51,34 +42,30 @@ class CryptoActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.state
-                    .collect {
-                        when (it) {
-                            is State.Initial -> {
-                                binding.progressBarLoading.isVisible = false
-                            }
+            viewModel.state
+                .transform {
+                    Log.d("CryptoViewModel", "Transform")
+                    delay(10_000)
+                    emit(it)
+                    // Позволяет создать дополнительный объект Flow и эмитить его
+                }
+                .flowWithLifecycle(lifecycle, Lifecycle.State.RESUMED)
+                .collect {
+                    when (it) {
+                        is State.Initial -> {
+                            binding.progressBarLoading.isVisible = false
+                        }
 
-                            is State.Loading -> {
-                                binding.progressBarLoading.isVisible = true
-                            }
+                        is State.Loading -> {
+                            binding.progressBarLoading.isVisible = true
+                        }
 
-                            is State.Content -> {
-                                binding.progressBarLoading.isVisible = false
-                                adapter.submitList(it.currencyList)
-                            }
+                        is State.Content -> {
+                            binding.progressBarLoading.isVisible = false
+                            adapter.submitList(it.currencyList)
                         }
                     }
-            }
-
-        }
-    }
-
-    private fun setPaddings() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+                }
         }
     }
 
