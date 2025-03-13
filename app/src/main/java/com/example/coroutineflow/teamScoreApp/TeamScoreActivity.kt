@@ -3,10 +3,14 @@ package com.example.coroutineflow.teamScoreApp
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.coroutineflow.databinding.ActivityTeamScoreBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class TeamScoreActivity : AppCompatActivity() {
@@ -27,32 +31,49 @@ class TeamScoreActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.state.observe(this) {
-            when (it) {
-                is TeamScoreState.Game -> {
-                    binding.team1Score.text = it.score1.toString()
-                    binding.team2Score.text = it.score2.toString()
-                }
-                is TeamScoreState.Winner -> {
-                    binding.team1Score.text = it.score1.toString()
-                    binding.team2Score.text = it.score2.toString()
-                    Toast.makeText(
-                        this,
-                        "Winner: ${it.winnerTeam}",
-                        Toast.LENGTH_LONG
-                    ).show()
+        lifecycleScope.launch {
+
+            viewModel.state.collect {
+                when (it) {
+                    is TeamScoreState.Game -> {
+                        binding.team1Score.text = it.score1.toString()
+                        binding.team2Score.text = it.score2.toString()
+                    }
+
+                    is TeamScoreState.Winner -> {
+                        binding.team1Score.text = it.score1.toString()
+                        binding.team2Score.text = it.score2.toString()
+
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            Toast.makeText(
+                                this@TeamScoreActivity,
+                                "Winner: ${it.winnerTeam}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                    }
                 }
             }
         }
+
     }
 
     private fun setupListeners() {
+
         binding.team1Logo.setOnClickListener {
-            viewModel.increaseScore(Team.TEAM_1)
+            Log.d("TeamScoreActivity", "team1Logo clicked")
+            lifecycleScope.launch {
+                viewModel.increaseScore(Team.TEAM_1)
+            }
         }
         binding.team2Logo.setOnClickListener {
-            viewModel.increaseScore(Team.TEAM_2)
+            Log.d("TeamScoreActivity", "team2Logo clicked")
+            lifecycleScope.launch {
+                viewModel.increaseScore(Team.TEAM_2)
+            }
         }
+
     }
 
     companion object {
