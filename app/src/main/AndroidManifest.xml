@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UsersActivity"
+            android:name=".user.UsersActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize">
             <meta-data
@@ -31,7 +31,7 @@
         </activity>
 
         <activity
-            android:name=".Users2Activity"
+            android:name=".user.Users2Activity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize">
             <meta-data
@@ -40,6 +40,13 @@
         </activity>
         <activity
             android:name=".cryptoApp.CryptoActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".teamScoreApp.TeamScoreActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

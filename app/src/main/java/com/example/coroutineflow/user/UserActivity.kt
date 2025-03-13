@@ -1,4 +1,4 @@
-package com.example.coroutineflow
+package com.example.coroutineflow.user
 
 import android.content.Context
 import android.content.Intent
