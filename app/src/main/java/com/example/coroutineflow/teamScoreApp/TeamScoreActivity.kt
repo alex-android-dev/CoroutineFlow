@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.coroutineflow.databinding.ActivityTeamScoreBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class TeamScoreActivity : AppCompatActivity() {
@@ -32,52 +33,47 @@ class TeamScoreActivity : AppCompatActivity() {
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-
-            viewModel.state.collect {
-                when (it) {
+            viewModel.state.collect { currentState ->
+                when (currentState) {
                     is TeamScoreState.Game -> {
-                        binding.team1Score.text = it.score1.toString()
-                        binding.team2Score.text = it.score2.toString()
+                        binding.team1Score.text = currentState.score1.toString()
+                        binding.team2Score.text = currentState.score2.toString()
                     }
 
                     is TeamScoreState.Winner -> {
-                        binding.team1Score.text = it.score1.toString()
-                        binding.team2Score.text = it.score2.toString()
+                        binding.team1Score.text = currentState.score1.toString()
+                        binding.team2Score.text = currentState.score2.toString()
 
-                        lifecycleScope.launch(Dispatchers.Main) {
+                        withContext(Dispatchers.Main) {
                             Toast.makeText(
                                 this@TeamScoreActivity,
-                                "Winner: ${it.winnerTeam}",
+                                "Winner: ${currentState.winnerTeam}",
                                 Toast.LENGTH_LONG
                             ).show()
                         }
+
 
                     }
                 }
             }
         }
-
     }
 
     private fun setupListeners() {
-
         binding.team1Logo.setOnClickListener {
             Log.d("TeamScoreActivity", "team1Logo clicked")
-            lifecycleScope.launch {
-                viewModel.increaseScore(Team.TEAM_1)
-            }
+            viewModel.increaseScore(Team.TEAM_1)
+
         }
         binding.team2Logo.setOnClickListener {
             Log.d("TeamScoreActivity", "team2Logo clicked")
-            lifecycleScope.launch {
-                viewModel.increaseScore(Team.TEAM_2)
-            }
+            viewModel.increaseScore(Team.TEAM_2)
         }
 
     }
 
     companion object {
-
         fun newIntent(context: Context) = Intent(context, TeamScoreActivity::class.java)
     }
+
 }
