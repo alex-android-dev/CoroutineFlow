@@ -36,6 +36,8 @@ class CryptoActivity : AppCompatActivity() {
 
         setPaddings()
 
+        lifecycleScope
+
         setupRecyclerView()
         observeViewModel()
 
@@ -74,6 +76,23 @@ class CryptoActivity : AppCompatActivity() {
             }
 
         }
+
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.state2
+                    .collect {
+                        when (it) {
+                            is State.Content -> {
+                                Log.d("CryptoActivity", it.currencyList.joinToString())
+                            }
+                            else -> ""
+                        }
+                    }
+            }
+        }
+
+
     }
 
     private fun setPaddings() {
@@ -85,7 +104,6 @@ class CryptoActivity : AppCompatActivity() {
     }
 
     companion object {
-
         fun newIntent(context: Context) = Intent(context, CryptoActivity::class.java)
     }
 }
